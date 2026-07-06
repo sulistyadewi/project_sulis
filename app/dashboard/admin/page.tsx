@@ -157,7 +157,7 @@ export default function DashAdmin() {
           {/* ========== KELOLA MATERI ========== */}
           {iscontrolSubject && (
             <div className="px-5 mt-5 transition-all">
-              <div>
+              {/* <div>
                 <form
                   action=""
                   className="flex flex-col bg-yellow-500 max-w-md p-4 rounded-xl"
@@ -195,7 +195,7 @@ export default function DashAdmin() {
                     />
                   </div>
                 </form>
-              </div>
+              </div> */}
               <div className="flex justify-between items-center">
                 <div className="flex flex-col gap-3">
                   <button
