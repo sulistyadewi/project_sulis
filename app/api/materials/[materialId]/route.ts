@@ -3,30 +3,33 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { classId: string } },
+  context: { params: Promise<{ materialId: string }> },
 ) {
-  const classId = Number(params.classId);
-  if (!Number.isFinite(classId)) {
+  const { materialId } = await context.params;
+
+  const material = Number(materialId);
+
+  if (!Number.isFinite(material)) {
     return NextResponse.json(
       {
         success: false,
-        message: "classId invalid",
+        message: "material Id invalid",
       },
       { status: 400 },
     );
   }
   const { data, error } = await supabase
-    .from("questions")
-    .select("*, materials!inner(class_id)")
-    .eq("materials.class_id", classId)
+    .from("materials")
+    .select("*")
+    .eq("id", material)
     .eq("is_active", true)
-    .order("sort_order", { ascending: true });
+    .single();
 
   if (error) {
     return NextResponse.json(
       {
         success: false,
-        message: "gagal mengambil soal",
+        message: "gagal mengambil detail materi",
         error: error.message,
       },
       { status: 500 },

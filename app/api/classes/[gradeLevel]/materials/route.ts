@@ -3,14 +3,19 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { gradeLevel: string } },
+  context: { params: Promise<{ gradeLevel: string }> },
 ) {
-  const gradeLevel = Number(params.gradeLevel);
-  if (!Number.isFinite(gradeLevel)) {
+  const { gradeLevel } = await context.params;
+  console.log(gradeLevel, "ini grade level");
+
+  const grade = Number(gradeLevel);
+  console.log(grade, "ini grade saja");
+
+  if (!Number.isFinite(grade)) {
     return NextResponse.json(
       {
         success: false,
-        message: "gradeLevel invalid",
+        message: "grade level invalid",
       },
       { status: 400 },
     );
@@ -18,7 +23,7 @@ export async function GET(
   const { data, error } = await supabase
     .from("materials")
     .select("*, classes!inner(grade_level)")
-    .eq("classes.grade_level", gradeLevel)
+    .eq("classes.grade_level", grade)
     .eq("is_active", true)
     .order("sort_order", { ascending: true });
 
