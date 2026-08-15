@@ -25,7 +25,8 @@ export async function GET(
     .select("*")
     .eq("material_id", material)
     .eq("is_active", true)
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .limit(20);
 
   if (error) {
     return NextResponse.json(

@@ -15,7 +15,7 @@ async function getQuestions(materialId: string) {
     throw new Error("Gagal mengambil soal latihan");
   }
 
-  const result = (await response.json()) as ApiResponse<QuestionItem[]>;
+  const result = (await response.json()) as ApiResponse<QuestionMaterial[]>;
 
   if (!result.success || !result.data) {
     throw new Error(result.message ?? "Soal latihan tidak tersedia");
