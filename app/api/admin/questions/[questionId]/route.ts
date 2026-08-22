@@ -12,7 +12,7 @@ export async function PUT(
     return NextResponse.json(
       {
         success: false,
-        message: "material Id invalid",
+        message: "id tidak ditemukan",
       },
       { status: 400 },
     );
