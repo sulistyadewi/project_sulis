@@ -3,39 +3,30 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  context: { params: Promise<{ materialId: string }> },
+  context: { params: Promise<{ questionId: string }> },
 ) {
-  const { materialId } = await context.params;
-  const id = Number(materialId);
+  const { questionId } = await context.params;
+  const id = Number(questionId);
 
   if (!Number.isFinite(id)) {
     return NextResponse.json(
       {
         success: false,
-        message: "material id invalid",
+        message: "id tidak ditemukan",
       },
-      {
-        status: 400,
-      },
+      { status: 400 },
     );
   }
 
-  const { data, error } = await supabase
-    .from("questions")
-    .select("*")
-    .eq("material_id", id)
-    .order("sort_order", { ascending: true });
-
+  const { data, error } = await supabase.from("questions").select("*");
   if (error) {
     return NextResponse.json(
       {
         success: false,
-        message: "gagal mengambil soal",
+        message: "tidak dapat terhubung ke supabase",
         error: error.message,
       },
-      {
-        status: 500,
-      },
+      { status: 500 },
     );
   }
   return NextResponse.json({

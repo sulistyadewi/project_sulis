@@ -25,30 +25,30 @@ export default async function Home() {
   return (
     <div className="bg-linear-to-br from-indigo-950  to-[#0f0720] min-h-screen px-4 py-8">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-wide text-violet-700">
+        <p className="text-sm font-semibold uppercase tracking-wide text-[#6D6B9A]">
           My Project
         </p>
         <h1 className="mt-2 text-3xl font-bold text-slate-200 md-text-5xl">
           Pilih Kelas Belajar
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-slate-600">
-          Pilih kelas, tonotn video materi, lalu kerjakan soal latihan
+        <p className="mt-3 max-w-2xl text-base text-[#D4C5F1]">
+          Pilih kelas, tonton video materi, lalu kerjakan soal latihan
         </p>
       </div>
 
       {classes.length === 0 ? (
-        <div className="rounded-lg bg-white p-6 text-slate-600 shadow-sm">
+        <div className="rounded-xl bg-white p-6 text-slate-600 shadow-sm">
           Belum ada data kelas. Silahkan tambahkan data kelas terlebih dahulu
         </div>
       ) : (
-        <div className="grid gap-4 sm-grid-cols-2 lg-grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-3">
           {classes.map((item) => (
             <Link
               key={item.id}
               href={`/kelas/${item.grade_level}`}
-              className="group overflow-hidden rounded-lg bg-white shadow-sm transition hover:translate-y-1 hover-shadow-md"
+              className="group overflow-hidden rounded-xl bg-[#F0EAFA] shadow-sm transition hover:translate-y-1 hover-shadow-md"
             >
-              <div className="aspect-2/3 bg-indigo-900">
+              <div className="aspect-square bg-[#432A71]">
                 {item.image_url ? (
                   <img
                     src={item.image_url}
@@ -56,7 +56,7 @@ export default async function Home() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-5xl font-bold text-violet-700">
+                  <div className="flex h-full items-center justify-center text-5xl font-bold text-[#9D7BE0]">
                     {item.grade_level}
                   </div>
                 )}

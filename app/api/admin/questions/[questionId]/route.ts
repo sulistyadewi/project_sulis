@@ -51,3 +51,43 @@ export async function PUT(
     data,
   });
 }
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ questionId: string }> },
+) {
+  const questionId = await context.params;
+  const id = Number(questionId);
+
+  if (!Number.isFinite(id)) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "id tidak ditemukan",
+      },
+      { status: 400 },
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("questions")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "gagal menghapus soal",
+      },
+      {
+        status: 500,
+      },
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    data,
+  });
+}
