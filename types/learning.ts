@@ -23,8 +23,8 @@ export type QuestionMaterial = {
   type: "pilihan ganda" | "essay";
   question: string;
   options: string[] | null;
-  correct_answer: string;
-  explanation: string;
+  correct_answer: string | null;
+  explanation: string | null;
   is_active: boolean;
   sort_order: number;
 };

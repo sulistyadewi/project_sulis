@@ -34,7 +34,10 @@ export default async function EditQuestion({
   return (
     <div>
       <div>
-        <QuestionForm materialId={Number(materialId)} />
+        <QuestionForm
+          materialId={Number(materialId)}
+          initialQuestion={question}
+        />
       </div>
     </div>
   );

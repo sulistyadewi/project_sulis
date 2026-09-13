@@ -1,5 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { getDashboard } from "@/lib/authRole";
+import { useRouter } from "next/navigation";
 import { FaBars } from "react-icons/fa6";
 import { IoAdd } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
@@ -9,6 +12,53 @@ import { LuLogOut } from "react-icons/lu";
 
 export default function DashStudent() {
   const [isSideBar, setIsSideBar] = useState<boolean>(true);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkUserRole = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (!isMounted) return;
+      if (!data.user || error) {
+        router.replace("/login");
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profile")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      const role = profile?.role === "admin" ? "admin" : "student";
+
+      if (role !== "student") {
+        router.replace(getDashboard(role));
+        return;
+      }
+
+      setUserEmail(data.user.email ?? "");
+      setCheckingAuth(false);
+    };
+    checkUserRole();
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  };
+
+  if (checkingAuth === true) {
+    return <div>Sedang Memeriksa Akun</div>;
+  }
 
   return (
     <div className="bg-linear-to-br from-indigo-950  to-[#0f0720] relative min-h-screen ">
@@ -97,7 +147,10 @@ export default function DashStudent() {
                 </button>
               </div>
               <div>
-                <button className="px-2 py-2 rounded-lg font-bold border-2 border-red-500">
+                <button
+                  onClick={handleLogout}
+                  className="px-2 py-2 rounded-lg font-bold border-2 border-red-500"
+                >
                   <LuLogOut className="text-red-400 font-semibold" />
                 </button>
               </div>

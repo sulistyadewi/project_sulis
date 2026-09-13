@@ -8,6 +8,7 @@ const getAdminQuestion = async (materialId: string) => {
     { cache: "no-store" },
   );
 
+  console.log(response, "ini response question");
   if (!response.ok) {
     throw new Error("gagal mengambil soal");
   }

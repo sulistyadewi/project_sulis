@@ -162,7 +162,7 @@ export default function QuestionForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-5 rounded-lg bg-white p-5 shadow-sm "
+      className="space-y-5 rounded-lg bg-white p-5 shadow-sm  bg-linear-to-br from-indigo-950  to-[#070316] text-black"
     >
       {error ? (
         <div className="rounded-md bg-red-50 p-3 text-sm font-medium text-red-700">
@@ -170,7 +170,7 @@ export default function QuestionForm({
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3 text-black">
         <label className="space-y-2">
           <span className="text-sm font-semibold text-slate-700">
             Tipe Soal
@@ -178,7 +178,7 @@ export default function QuestionForm({
           <select
             value={type}
             onChange={(event) => setType(event.target.value)}
-            className="w-full rounded-md border border-slate-200 px-3 py-2"
+            className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           >
             <option value="pilihan_ganda">Pilihan Ganda</option>
             <option value="essay">Essay</option>
@@ -193,7 +193,7 @@ export default function QuestionForm({
           <select
             value={difficulty}
             onChange={(event) => setDifficulty(event.target.value)}
-            className="w-full rounded-md border border-slate-200 px-3 py-2"
+            className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           >
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
@@ -207,7 +207,7 @@ export default function QuestionForm({
             type="number"
             value={sortOrder}
             onChange={(event) => setSortOrder(Number(event.target.value))}
-            className="w-full rounded-md border border-slate-200 px-3 py-2"
+            className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           />
         </label>
       </div>
@@ -218,7 +218,7 @@ export default function QuestionForm({
           value={question}
           onChange={(event) => setQuestion(event.target.value)}
           rows={5}
-          className="w-full rounded-md border border-slate-200 px-3 py-2"
+          className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           placeholder="Tulis pertanyaan soal"
         />
       </label>
@@ -228,7 +228,7 @@ export default function QuestionForm({
         <input
           value={imageUrl}
           onChange={(event) => setImageUrl(event.target.value)}
-          className="w-full rounded-md border border-slate-200 px-3 py-2"
+          className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           placeholder="/images/questions/class-1/material-1/question-1.png"
         />
       </label>
@@ -305,7 +305,7 @@ export default function QuestionForm({
           <select
             value={correctAnswer}
             onChange={(event) => setCorrectAnswer(event.target.value)}
-            className="w-full rounded-md border border-slate-200 px-3 py-2"
+            className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           >
             <option value="">Pilih jawaban benar</option>
             {cleanOptions.map((option) => (
@@ -318,7 +318,7 @@ export default function QuestionForm({
           <input
             value={correctAnswer}
             onChange={(event) => setCorrectAnswer(event.target.value)}
-            className="w-full rounded-md border border-slate-200 px-3 py-2"
+            className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
             placeholder="Tulis jawaban benar"
           />
         )}
@@ -330,7 +330,7 @@ export default function QuestionForm({
           value={explanation}
           onChange={(event) => setExplanation(event.target.value)}
           rows={5}
-          className="w-full rounded-md border border-slate-200 px-3 py-2"
+          className="w-full rounded-md border border-slate-200 px-3 py-2 bg-white"
           placeholder="Tulis pembahasan jawaban"
         />
       </label>

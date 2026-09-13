@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
-import { getDashboard, normalizeRole } from "@/lib/authRole";
+import React, { useState } from "react";
+import Link from "next/link";
 import { FaBars } from "react-icons/fa6";
 import { IoAdd } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
@@ -10,61 +8,12 @@ import { GiBookmarklet } from "react-icons/gi";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
 import { IoArrowBack } from "react-icons/io5";
+// import { CiSearch } from "react-icons/ci";
 
-export default function DashAdmin() {
+export default function PageAdmin() {
   const [isSideBar, setIsSideBar] = useState<boolean>(true);
   const [iscontrolSubject, setIsControlSubject] = useState<boolean>(false);
   const [isControlUser, setIsControlUser] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    let isMounted = true;
-    const checkUserRole = async () => {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (!isMounted) return;
-      if (!data.user || error) {
-        router.replace("/login");
-        return;
-      }
-
-      const { data: profile, error: profileError } = await supabase
-        .from("profile")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError || !profile) {
-        router.replace("/login");
-        return;
-      }
-
-      const role = normalizeRole(profile.role) ?? "student";
-
-      if (role !== "admin") {
-        router.replace(getDashboard(role));
-        return;
-      }
-
-      setUserEmail(data.user.email ?? "");
-      setCheckingAuth(false);
-    };
-    checkUserRole();
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.replace("/login");
-    router.refresh();
-  };
 
   // API url
   // https://sxocjsgvgdbokequbwiz.supabase.co
@@ -98,11 +47,13 @@ export default function DashAdmin() {
                 quick actions
               </h3>
               <div className="mt-3 flex flex-col gap-2">
-                <div className="flex justify-between items-center hover:bg-violet-900 px-5 py-2 rounded-2xl">
-                  <label htmlFor="" className="text-sm w-28">
-                    Kelola Materi
-                  </label>
-                </div>
+                <Link href={`materi`}>
+                  <div className="flex justify-between items-center hover:bg-violet-900 px-5 py-2 rounded-2xl">
+                    <label htmlFor="" className="text-sm w-28">
+                      Kelola Materi
+                    </label>
+                  </div>
+                </Link>
                 <div className="flex justify-between items-center hover:bg-violet-900 px-5 py-2 rounded-2xl">
                   <label htmlFor="" className="text-sm w-28">
                     Kelola Pengguna
@@ -148,10 +99,7 @@ export default function DashAdmin() {
                 </button>
               </div>
               <div>
-                <button
-                  onClick={handleLogout}
-                  className="px-2 py-2 rounded-lg font-bold border-2 border-red-500"
-                >
+                <button className="px-2 py-2 rounded-lg font-bold border-2 border-red-500">
                   <LuLogOut className="text-red-400 font-semibold" />
                 </button>
               </div>

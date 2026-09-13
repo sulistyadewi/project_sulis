@@ -1,4 +1,6 @@
 "use client";
+import { getUserRole, getDashboard, normalizeRole } from "@/lib/authRole";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import { MdLogin } from "react-icons/md";
@@ -8,15 +10,40 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
-  // const handleLogin = async (e: FormEvent) => {
-  //   e.preventDefault();
-  //   setLoading(true);
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  //   router.push("/dashboard/student");
-  // };
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error || !data.user) {
+      setError(error?.message ?? "login gagal, periksa email dan password");
+      setLoading(false);
+      return;
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profileError || !profile) {
+      setError("role akun tidak terbaca");
+      setLoading(false);
+      return;
+    }
+    const role = normalizeRole(profile.role) ?? "student";
+
+    router.replace(getDashboard(role));
+  };
 
   return (
     <div className="bg-linear-to-br from-indigo-950  to-[#070316] h-screen">
@@ -30,7 +57,7 @@ export default function Login() {
           <h1 className="text-white">Hello, Welcome to Our Website</h1>
         </div>
         <div className="mt-8 max-w-lg p-2">
-          <form action="">
+          <form onSubmit={handleLogin}>
             <div className="flex flex-col">
               <label
                 htmlFor=""
@@ -62,7 +89,10 @@ export default function Login() {
               />
             </div>
             <div className="mt-6 flex text-center">
-              <button className="bg-amber-500 w-full rounded-lg py-1.5 text-center flex justify-center items-center gap-2 text-black">
+              <button
+                type="submit"
+                className="bg-amber-500 w-full rounded-lg py-1.5 text-center flex justify-center items-center gap-2 text-black"
+              >
                 <MdLogin className="text-xl" />
                 Login
               </button>
