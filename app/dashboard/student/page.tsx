@@ -8,14 +8,34 @@ import { IoAdd } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { GiBookmarklet } from "react-icons/gi";
 import { LuLogOut } from "react-icons/lu";
-// import { CiSearch } from "react-icons/ci";
+import { ClassItem, ApiResponse } from "@/types/learning";
+import Link from "next/link";
 
-export default function DashStudent() {
+const getClasses = async () => {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const response = await fetch(`${baseUrl}/api/classes`, { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error("gagal mengambil kelas");
+  }
+
+  const result = (await response.json()) as ApiResponse<ClassItem[]>;
+
+  console.log(result, "ini result home");
+
+  if (!result.success || !result.data) {
+    throw new Error(result.message ?? "data kelas tidak tersedia");
+  }
+  return result.data;
+};
+
+export default async function DashStudent() {
   const [isSideBar, setIsSideBar] = useState<boolean>(true);
   const [userEmail, setUserEmail] = useState<string>("");
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
 
   const router = useRouter();
+  const classes = await getClasses();
 
   useEffect(() => {
     let isMounted = true;
@@ -29,7 +49,7 @@ export default function DashStudent() {
       }
 
       const { data: profile } = await supabase
-        .from("profile")
+        .from("profiles")
         .select("role")
         .eq("id", data.user.id)
         .single();
@@ -48,7 +68,7 @@ export default function DashStudent() {
     return () => {
       isMounted = false;
     };
-  }, [router]);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -166,186 +186,47 @@ export default function DashStudent() {
               : "w-5/6 justify-self-end duration-300  ease-in-out transition-all"
           }
         >
-          <div className="px-5 mt-8">
-            <h1 className="uppercase font-bold text-2xl">dashboard Student</h1>
-            <p className="text-sm text-[#c2bcd1] text-justify">
-              "Ketekunan dan disiplin dalam belajar adalah kunci untuk meraih
-              prestasi. <br /> Setiap usaha yang kamu lakukan hari ini akan
-              memberikan hasil di masa depan."
-            </p>
-          </div>
-          <div className="px-5 grid grid-cols-4 gap-4 mt-8 mb-8">
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
+          {classes.length === 0 ? (
+            <div className="rounded-xl bg-white p-6 text-slate-600 shadow-sm">
+              Belum ada data kelas. Silahkan tambahkan data kelas terlebih
+              dahulu
             </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
+          ) : (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-3">
+              {classes.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/kelas/${item.grade_level}`}
+                  className="group overflow-hidden rounded-xl bg-[#F0EAFA] shadow-sm transition hover:translate-y-1 hover-shadow-md"
+                >
+                  <div className="aspect-square bg-[#432A71]">
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt={item.title}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-5xl font-bold text-[#9D7BE0]">
+                        {item.grade_level}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h2 className="text-xl font-bold text-slate-900">
+                      {item.title}
+                    </h2>
+                    <p className="mt-2 line-clamp-2 text-sm text-slate-600">
+                      {item.description ?? "Materi Belajar"}
+                    </p>
+                    <p className="mt-4 text-sm font-semibold text-violet-700">
+                      Lihat materi
+                    </p>
+                  </div>
+                </Link>
+              ))}
             </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50">Tittle of Subject</h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                illo provident maxime soluta modi. Eligendi, vel!
-              </p>
-              <div className="text-xs flex gap-3 items-center mt-3">
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-                <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                  category
-                </h3>
-              </div>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2">Timestamp</h3>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

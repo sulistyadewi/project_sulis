@@ -11,12 +11,25 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
 import { IoArrowBack } from "react-icons/io5";
 
+type StudentAccount = {
+  id: string;
+  name: string;
+  gradeLevel: number;
+  username: string;
+  pin: string;
+};
+
 export default function DashAdmin() {
   const [isSideBar, setIsSideBar] = useState<boolean>(true);
   const [iscontrolSubject, setIsControlSubject] = useState<boolean>(false);
   const [isControlUser, setIsControlUser] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+  const [studentName, setStudentName] = useState<string>("");
+  const [gradeLevel, setGradeLevel] = useState<number>(0);
+  const [createStudent, setCreateStudent] = useState<StudentAccount | null>(
+    null,
+  );
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -34,7 +47,7 @@ export default function DashAdmin() {
       }
 
       const { data: profile, error: profileError } = await supabase
-        .from("profile")
+        .from("profiles")
         .select("role")
         .eq("id", data.user.id)
         .single();
@@ -59,6 +72,21 @@ export default function DashAdmin() {
       isMounted = false;
     };
   }, [router]);
+
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
+
+  const response = await fetch(`/api/admin/students`, {
+    method: "POST",
+    headers: {
+      Content_Type: "application/json",
+      Authorization: `Bearer${accessToken}`,
+    },
+    body: JSON.stringify({
+      name: studentName,
+      gradeLevel: Number(gradeLevel),
+    }),
+  });
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -105,7 +133,7 @@ export default function DashAdmin() {
                 </div>
                 <div className="flex justify-between items-center hover:bg-violet-900 px-5 py-2 rounded-2xl">
                   <label htmlFor="" className="text-sm w-28">
-                    Kelola Pengguna
+                    Kelola Student
                   </label>
                 </div>
               </div>
