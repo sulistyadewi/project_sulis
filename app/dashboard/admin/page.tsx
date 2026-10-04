@@ -30,6 +30,7 @@ export default function DashAdmin() {
   const [createStudent, setCreateStudent] = useState<StudentAccount | null>(
     null,
   );
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -73,20 +74,60 @@ export default function DashAdmin() {
     };
   }, [router]);
 
-  const { data: sessionData } = await supabase.auth.getSession();
-  const accessToken = sessionData.session?.access_token;
+  const handleCreateStudent = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    if (checkingAuth || loading) return;
+    setError("");
+    setSuccessMessage("");
 
-  const response = await fetch(`/api/admin/students`, {
-    method: "POST",
-    headers: {
-      Content_Type: "application/json",
-      Authorization: `Bearer${accessToken}`,
-    },
-    body: JSON.stringify({
-      name: studentName,
-      gradeLevel: Number(gradeLevel),
-    }),
-  });
+    if (!studentName.trim()) {
+      setError("nama wajib diisi");
+    }
+    if (gradeLevel < 1 || gradeLevel > 12 || !Number.isInteger(gradeLevel)) {
+      setError("Pilih kelas 1-12");
+      setLoading(true);
+
+      try {
+        const { data: sessionData, error: sessionError } =
+          await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+
+        const accessToken = sessionData.session?.access_token;
+        if (!accessToken) throw new Error("silahkan login kembali");
+
+        const response = await fetch(`/api/admin/students`, {
+          method: "POST",
+          headers: {
+            Content_Type: "application/json",
+            Authorization: `Bearer${accessToken}`,
+          },
+          body: JSON.stringify({
+            name: studentName.trim(),
+            gradeLevel,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error(
+            `gagal membuat akun, silahkan coba lagi status HTTP ${response.status}`,
+          );
+        }
+        setSuccessMessage("pembuatan akun siswa berhasil");
+        setStudentName("");
+        setGradeLevel(0);
+        alert("Akun siswa berhasil dibuat!");
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "terjadi kesalahan dalam pembuatan akun",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -105,6 +146,50 @@ export default function DashAdmin() {
 
   return (
     <div className="bg-linear-to-br from-indigo-950  to-[#0f0720] relative min-h-screen ">
+      {isControlUser && (
+        <div>
+          <button
+            className="bg-red-200 text-white px-2 py-2"
+            onClick={() => setIsControlUser(false)}
+          >
+            Back
+          </button>
+          <form onSubmit={handleCreateStudent} className="flex flex-col gap-3">
+            <div>
+              <label htmlFor="">Name</label>
+              <input
+                type="text"
+                value={studentName}
+                onChange={(e) => setStudentName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="">Grade Level</label>
+              <select
+                name=""
+                id=""
+                value={gradeLevel}
+                onChange={(e) => setGradeLevel(Number(e.target.value))}
+              >
+                <option value={0}></option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((level) => (
+                  <option key={level} value={level} className="text-black">
+                    Kelas {level}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {successMessage && (
+              <p className="text-green-300">{successMessage}</p>
+            )}
+            {error && <p className="text-red-400">{error}</p>}
+            <button type="submit" className="bg-blue-500 px-3 py-2 ">
+              {loading ? "Loading..." : "Create Student Account"}
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* ====== SIDE BAR ===== */}
       {isSideBar && (
         <div
@@ -223,19 +308,26 @@ export default function DashAdmin() {
                 </h3>
               </div>
             </button>
-            <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-              <h2 className="text-violet-50 font-semibold">
-                Perbarui dan Tambahkan Izin Pengguna
-              </h2>
-              <p className="text-sm mt-4 text-[#ab98ce]">
-                Kelola pengguna website disini!
-              </p>
-              <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-              <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
-                Kelola Pengguna
-                <FaLongArrowAltRight />
-              </h3>
-            </div>
+            <button
+              onClick={() => {
+                setIsControlUser(true);
+                setIsControlSubject(false);
+              }}
+            >
+              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                <h2 className="text-violet-50 font-semibold">
+                  Perbarui dan Tambahkan Izin Pengguna
+                </h2>
+                <p className="text-sm mt-4 text-[#ab98ce]">
+                  Kelola pengguna website disini!
+                </p>
+                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
+                  Kelola Pengguna
+                  <FaLongArrowAltRight />
+                </h3>
+              </div>
+            </button>
           </div>
           {/* ========== KELOLA MATERI ========== */}
           {iscontrolSubject && (

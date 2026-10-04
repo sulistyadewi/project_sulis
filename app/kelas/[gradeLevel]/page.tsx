@@ -34,7 +34,7 @@ export default async function MaterialsByClassPage({
     <div className="min-h-screen bg-linear-to-br from-indigo-950 to-[#0f0720] px-4 py-8">
       <div className="mx-auto max-w-6xl">
         <Link
-          href="/"
+          href="/dashboard/student"
           className="mb-5 inline-flex rounded-md border border-red-500 bg-red-400 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
         >
           Kembali ke Daftar Kelas

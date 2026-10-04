@@ -11,7 +11,7 @@ import { LuLogOut } from "react-icons/lu";
 import { ClassItem, ApiResponse } from "@/types/learning";
 import Link from "next/link";
 
-const getClasses = async () => {
+const getClasses = async (signal: AbortSignal): Promise<ClassItem[]> => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const response = await fetch(`${baseUrl}/api/classes`, { cache: "no-store" });
 
@@ -29,13 +29,16 @@ const getClasses = async () => {
   return result.data;
 };
 
-export default async function DashStudent() {
+export default function DashStudent() {
   const [isSideBar, setIsSideBar] = useState<boolean>(true);
   const [userEmail, setUserEmail] = useState<string>("");
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [authError, setAuthError] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const router = useRouter();
-  const classes = await getClasses();
 
   useEffect(() => {
     let isMounted = true;
@@ -68,13 +71,56 @@ export default async function DashStudent() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [router]);
+
+  useEffect(() => {
+    if (checkingAuth || authError) return;
+    let controller = new AbortController();
+
+    const loadClasses = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const data = await getClasses(controller.signal);
+        if (!controller.signal.aborted) {
+          setClasses(data);
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          setError(
+            error instanceof Error
+              ? error.message
+              : "terjadi kesalahan saaat mengambil kelas",
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+    void loadClasses();
+    return () => {
+      controller.abort;
+    };
+  }, [checkingAuth]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.replace("/login");
     router.refresh();
   };
+
+  if (authError) {
+    return (
+      <div>
+        <p>{authError}</p>
+        <button>Coba Lagi</button>
+        <Link href="/login"></Link>
+      </div>
+    );
+  }
 
   if (checkingAuth === true) {
     return <div>Sedang Memeriksa Akun</div>;
@@ -186,11 +232,14 @@ export default async function DashStudent() {
               : "w-5/6 justify-self-end duration-300  ease-in-out transition-all"
           }
         >
-          {classes.length === 0 ? (
+          {loading ? (
             <div className="rounded-xl bg-white p-6 text-slate-600 shadow-sm">
-              Belum ada data kelas. Silahkan tambahkan data kelas terlebih
-              dahulu
+              Sedang memuat kelas...
             </div>
+          ) : error ? (
+            <div>{error}</div>
+          ) : classes.length === 0 ? (
+            <div>Belum ada kelas</div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-3">
               {classes.map((item) => (
