@@ -8,6 +8,7 @@ import { MdLogin } from "react-icons/md";
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loginId, setLoginId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState("");
@@ -17,7 +18,16 @@ export default function Login() {
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    // alert("tes");
     setError("");
+
+    const normalizeLogin = loginId.trim().toLowerCase();
+    const isStudentLogin = !normalizeLogin.includes("@");
+    const email = !isStudentLogin
+      ? normalizeLogin
+      : `${normalizeLogin}@student.local`;
+
+    const loginPassword = isStudentLogin ? password.trim() : password;
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
