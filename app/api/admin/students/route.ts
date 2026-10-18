@@ -1,4 +1,4 @@
-import { randomBytes, randomInt } from "node:crypto";
+import { randomInt } from "node:crypto";
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseAdmin";
 import { normalizeRole } from "@/lib/authRole";
@@ -6,25 +6,38 @@ type CreateStudentBody = {
   name?: unknown;
   gradeLevel?: unknown;
 };
-function createUsername(name: string, gradeLevel: number) {
-  let slug = "";
-  for (const character of name.toLowerCase()) {
-    const code = character.charCodeAt(0);
-    const isLetter = code >= 97 && code <= 122;
-    const isNumber = code >= 48 && code <= 57;
-    if (isLetter || isNumber) {
-      slug += character;
-    } else if (slug.length > 0 && !slug.endsWith(".")) {
-      slug += ".";
-    }
-    if (slug.length >= 32) break;
-  }
-  while (slug.endsWith(".")) {
-    slug = slug.slice(0, -1);
-  }
-  const uniqueCode = randomBytes(3).toString("hex");
-  return `${slug || "student"}.kelas${gradeLevel}.${uniqueCode}`;
+// function createUsername(name: string, gradeLevel: number) {
+//   let slug = "";
+//   for (const character of name.toLowerCase()) {
+//     const code = character.charCodeAt(0);
+//     const isLetter = code >= 97 && code <= 122;
+//     const isNumber = code >= 48 && code <= 57;
+//     if (isLetter || isNumber) {
+//       slug += character;
+//     } else if (slug.length > 0 && !slug.endsWith(".")) {
+//       slug += ".";
+//     }
+//     if (slug.length >= 32) break;
+//   }
+//   while (slug.endsWith(".")) {
+//     slug = slug.slice(0, -1);
+//   }
+//   // const uniqueCode = randomBytes(3).toString("hex");
+//   return `${slug || "student"}.kelas${gradeLevel}.${uniqueCode}`;
+// }
+
+function createUsername(name: string) {
+  let slug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z]/g, "")
+    .slice(0, 20);
+
+  const randomNumber = randomInt(100, 1000);
+  return `${slug || "student"}${randomNumber} `;
 }
+
 function createPin() {
   return randomInt(100000, 1000000).toString();
 }
@@ -86,9 +99,9 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  const username = createUsername(name, gradeLevel);
+  const username = createUsername(name);
   const pin = createPin();
-  const internalEmail = `${username}@student.local`;
+  const internalEmail = `${username}@student.example.com`;
   const { data: createdUser, error: createError } =
     await supabase.auth.admin.createUser({
       email: internalEmail,

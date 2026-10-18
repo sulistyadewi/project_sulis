@@ -211,7 +211,7 @@ export default function DashAdmin() {
                   className="flex justify-between items-center hover:bg-violet-900 px-5 py-2 rounded-2xl"
                 >
                   <label htmlFor="" className="text-sm w-28">
-                    Kelola Student
+                    Kelola Student --
                   </label>
                 </button>
               </div>

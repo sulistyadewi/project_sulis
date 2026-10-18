@@ -6,7 +6,7 @@ import React, { FormEvent, useState } from "react";
 import { MdLogin } from "react-icons/md";
 
 export default function Login() {
-  const [email, setEmail] = useState<string>("");
+  // const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loginId, setLoginId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,13 +25,13 @@ export default function Login() {
     const isStudentLogin = !normalizeLogin.includes("@");
     const email = !isStudentLogin
       ? normalizeLogin
-      : `${normalizeLogin}@student.local`;
+      : `${normalizeLogin}@student.example.com`;
 
     const loginPassword = isStudentLogin ? password.trim() : password;
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password: loginPassword,
     });
     if (error || !data.user) {
       setError(error?.message ?? "login gagal, periksa email dan password");
@@ -78,8 +78,8 @@ export default function Login() {
               <input
                 type="text"
                 placeholder="example@mail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
                 className="bg-[#3b3457] rounded-lg outline-1 focus:outline-2 focus:outline-indigo-200 w-[18rem] h-10 p-2 text-indigo-50"
               />
             </div>
