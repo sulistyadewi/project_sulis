@@ -170,18 +170,6 @@ export default function DashAdmin() {
 
   return (
     <div className="bg-linear-to-br from-indigo-950  to-[#0f0720] relative min-h-screen ">
-      <div>
-        {successMessage && <p>{successMessage}</p>}
-        {createStudent && (
-          <div>
-            <h1>{createStudent.name}</h1>
-            <h1>{createStudent.gradeLevel}</h1>
-            <h1>{createStudent.username}</h1>
-            <h1>{createStudent.pin}</h1>
-          </div>
-        )}
-      </div>
-
       {/* ====== SIDE BAR ===== */}
       {isSideBar && (
         <div
@@ -291,246 +279,238 @@ export default function DashAdmin() {
               Kelola materi dan pengguna dengan cepat.
             </p>
           </div>
-          {activeView === "overview" && (
-            <div>
-              <button type="button" onClick={showMaterial}>
-                <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                  <h2 className="text-violet-50 font-semibold text-left">
-                    Perbarui dan Tambah Materi
-                  </h2>
-                  <p className="text-sm mt-4 text-[#ab98ce]">
-                    Perbarui dan tambah materi subjek disini
-                  </p>
-                  <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                  <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
-                    Kelola Materi
-                    <FaLongArrowAltRight />
-                  </h3>
-                </div>
-              </button>
-              <button type="button" onClick={showStudent}>
-                <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                  <h2 className="text-violet-50 font-semibold">
-                    Perbarui dan Tambahkan Izin Pengguna
-                  </h2>
-                  <p className="text-sm mt-4 text-[#ab98ce]">
-                    Kelola pengguna website disini!
-                  </p>
-                  <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                  <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
-                    Kelola Pengguna
-                    <FaLongArrowAltRight />
-                  </h3>
-                </div>
-              </button>
-            </div>
-          )}
-          {activeView === "student" && (
-            <div>
-              <button
-                className="bg-red-200 text-white px-2 py-2"
-                type="button"
-                onClick={showOverview}
-              >
-                Back
-              </button>
-              <form
-                onSubmit={handleCreateStudent}
-                className="flex flex-col gap-3"
-              >
-                <div>
-                  <label htmlFor="">Name</label>
-                  <input
-                    type="text"
-                    value={studentName}
-                    onChange={(e) => setStudentName(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="">Grade Level</label>
-                  <select
-                    name=""
-                    id=""
-                    value={gradeLevel}
-                    onChange={(e) => setGradeLevel(Number(e.target.value))}
-                  >
-                    <option value={0}></option>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map(
-                      (level) => (
-                        <option
-                          key={level}
-                          value={level}
-                          className="text-black"
-                        >
-                          Kelas {level}
-                        </option>
-                      ),
-                    )}
-                  </select>
-                </div>
-                {successMessage && (
-                  <p className="text-green-300">{successMessage}</p>
-                )}
-                {error && <p className="text-red-400">{error}</p>}
-                <button type="submit" className="bg-blue-500 px-3 py-2 ">
-                  {loading ? "Loading..." : "Create Student Account"}
+          <div className="px-5 flex gap-4">
+            {activeView === "overview" && (
+              <div className="flex gap-4">
+                <button type="button" onClick={showMaterial}>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50 font-semibold text-left">
+                      Perbarui dan Tambah Materi
+                    </h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Perbarui dan tambah materi subjek disini
+                    </p>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
+                      Kelola Materi
+                      <FaLongArrowAltRight />
+                    </h3>
+                  </div>
                 </button>
-              </form>
-            </div>
-          )}
-          {activeView === "material" && (
-            <div className="grid grid-cols-4 gap-4 mt-8 mb-8">
-              <button onClick={showOverview} className="flex items-center">
-                <IoArrowBack /> Back
-              </button>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
+                <button type="button" onClick={showStudent}>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50 font-semibold">
+                      Perbarui dan Tambahkan Izin Pengguna
+                    </h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Kelola pengguna website disini!
+                    </p>
+                    <h4 className="border-b mt-2 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2 flex items-center gap-2 justify-end text-indigo-300">
+                      Kelola Pengguna
+                      <FaLongArrowAltRight />
+                    </h3>
+                  </div>
+                </button>
               </div>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
+            )}
+            {activeView === "student" && (
+              <div>
+                <button
+                  className="bg-red-500 text-white px-2 py-2 rounded flex items-center mt-2"
+                  type="button"
+                  onClick={showOverview}
+                >
+                  <IoArrowBack /> Back
+                </button>
+                <div className="flex">
+                  <div>
+                    <form
+                      onSubmit={handleCreateStudent}
+                      className="flex flex-col gap-3 bg-[#866ddfc7] p-5 rounded mt-5 max-w-xl"
+                    >
+                      <div className="flex flex-col">
+                        <label htmlFor="" className="">
+                          Name
+                        </label>
+                        <input
+                          type="text"
+                          value={studentName}
+                          onChange={(e) => setStudentName(e.target.value)}
+                          className="bg-[#3b3457] h-10 w-68 p-1 rounded-md"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label htmlFor="" className="">
+                          Grade Level
+                        </label>
+                        <select
+                          name=""
+                          id=""
+                          value={gradeLevel}
+                          onChange={(e) =>
+                            setGradeLevel(Number(e.target.value))
+                          }
+                          className="bg-[#3b3457] p-1 rounded-md h-10 w-68"
+                        >
+                          <option value={0}></option>
+                          {Array.from({ length: 12 }, (_, i) => i + 1).map(
+                            (level) => (
+                              <option key={level} value={level} className="">
+                                Kelas {level}
+                              </option>
+                            ),
+                          )}
+                        </select>
+                      </div>
+                      {successMessage && (
+                        <p className="text-green-300">{successMessage}</p>
+                      )}
+                      {error && <p className="text-red-400">{error}</p>}
+                      <button type="submit" className="bg-[#1f2c58] px-3 py-2 ">
+                        {loading ? "Loading..." : "Create Student Account"}
+                      </button>
+                    </form>
+                  </div>
+                  <div className="bg-[#23145f] mx-10 px-5 border-2 border-[#f7f5ff] rounded-md">
+                    {successMessage && (
+                      <p className="text-green-500 mt-5 text-center capitalize">
+                        {successMessage}
+                      </p>
+                    )}
+                    <h4 className="border-b mt-2 border-[#4f437e]"></h4>
+                    {createStudent && (
+                      <div className="mt-2">
+                        <h1>Name : {createStudent.name}</h1>
+                        <h1>Grade Level : {createStudent.gradeLevel}</h1>
+                        <h1>Username : {createStudent.username}</h1>
+                        <h1>Password : {createStudent.pin}</h1>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
               </div>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
+            )}
+            {activeView === "material" && (
+              <div>
+                <button
+                  onClick={showOverview}
+                  className="flex items-center bg-red-500 rounded-md px-2 py-2 mt-3"
+                >
+                  <IoArrowBack /> Back
+                </button>
+                <div className="grid grid-cols-4 gap-4 mt-6 mb-8">
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
+                  <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
+                    <h2 className="text-violet-50">Tittle of Subject</h2>
+                    <p className="text-sm mt-4 text-[#ab98ce]">
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Nobis illo provident maxime soluta modi. Eligendi, vel!
+                    </p>
+                    <div className="text-xs flex gap-3 items-center mt-3">
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                      <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
+                        category
+                      </h3>
+                    </div>
+                    <h4 className="border-b mt-4 border-[#4f437e]"></h4>
+                    <h3 className="text-sm mt-2">Timestamp</h3>
+                  </div>
                 </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
               </div>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
-              </div>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
-              </div>
-              <div className="mt-3 border border-[#2f245a] max-w-md rounded-xl bg-[#3a255f] p-4">
-                <h2 className="text-violet-50">Tittle of Subject</h2>
-                <p className="text-sm mt-4 text-[#ab98ce]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis
-                  illo provident maxime soluta modi. Eligendi, vel!
-                </p>
-                <div className="text-xs flex gap-3 items-center mt-3">
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                  <h3 className="bg-amber-600 py-1 px-2 rounded-full capitalize">
-                    category
-                  </h3>
-                </div>
-                <h4 className="border-b mt-4 border-[#4f437e]"></h4>
-                <h3 className="text-sm mt-2">Timestamp</h3>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* ========== 
           KELOLA MATERI ========== */}
           {iscontrolSubject && (
             <div className="px-5 mt-5 transition-all">
-              {/* <div>
-                <form
-                  action=""
-                  className="flex flex-col bg-yellow-500 max-w-md p-4 rounded-xl"
-                >
-                  <div className="flex flex-col">
-                    <label htmlFor="">Title</label>
-                    <input
-                      type="text"
-                      className="bg-[#f8c024fd] p-2 outline-yellow-800 outline-1 focus:outline-yellow-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="">Description</label>
-                    <textarea name="" id=""></textarea>
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="">Video URL</label>
-                    <input
-                      type="file"
-                      className="bg-[#f8c024fd] p-2 outline-yellow-800 outline-1 focus:outline-yellow-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="">Image URL</label>
-                    <input
-                      type="file"
-                      className="bg-[#f8c024fd] p-2 outline-yellow-800 outline-1 focus:outline-yellow-300 rounded-lg"
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <label htmlFor="">Grade</label>
-                    <input
-                      type="text"
-                      className="bg-[#f8c024fd] p-2 outline-yellow-800 outline-1 focus:outline-yellow-300 rounded-lg"
-                    />
-                  </div>
-                </form>
-              </div> */}
               <div className="flex justify-between items-center">
                 <div className="flex flex-col gap-3">
                   <input
@@ -545,7 +525,6 @@ export default function DashAdmin() {
                   </button>
                 </div>
               </div>
-              {/* ======== CARD ======= */}
             </div>
           )}
         </div>
